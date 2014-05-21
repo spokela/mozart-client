@@ -15,8 +15,12 @@ class Bot extends EventEmitter
 
     self = @
     @slot.on 'message', (data) ->
+      obj = JSON.parse(data)
+
+      console.log obj
       if typeof self.slotCallback == 'function'
-        self.slotCallback(data)
+        self.slotCallback(obj)
+
       self.slotCallback = null
 
     @send(
