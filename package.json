@@ -1,0 +1,33 @@
+{
+  "name": "mozart-client",
+  "version": "1.0.0",
+
+  "author": "neiluj",
+
+  "keywords": [
+  ],
+
+  "description": "client for mozart-core",
+
+  "licenses": [{
+    "type": "GPL",
+    "url": "https://raw.github.com/spokela/mozart-core/master/LICENSE"
+  }],
+
+  "repository" : {
+    "type": "git",
+    "url": "https://github.com/spokela/mozart-client.git"
+  },
+
+  "dependencies": {
+    "coffee-script": "1.6.3",
+    "zmq": "2.7.0"
+  },
+
+  "engines": {
+    "node": ">= 0.8.x",
+    "npm":  ">= 1.1.x"
+  },
+
+  "main": "./index"
+}
