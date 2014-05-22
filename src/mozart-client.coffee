@@ -5,11 +5,13 @@
 zmq = require 'zmq'
 {EventEmitter} = require 'events'
 Bot = require './bot'
+IRC_EVENTS = require './events'
 
 class MozartClient extends EventEmitter
   constructor: (@subscriberAddr, @slotAddr = null, @subscribeTo = []) ->
     @subscriber = null
     @slot = null
+    @bots = []
 
   initSubscriber: ->
     if @subscriber != null
@@ -58,8 +60,16 @@ class MozartClient extends EventEmitter
 
     split = data.split('% ')
     args = JSON.parse(split[1])
+    args2 = args
     args.unshift(split[0])
     @emit.apply(@, args)
+
+    if split[0].indexOf('@') != -1
+      evt = split[0].split('@')
+      args2.unshift(evt[0])
+      botId = evt[1]
+      if @bots[botId] != undefined
+        @bots[botId].emit.apply(@bots[botId], args2)
 
   createBot: (nickname, ident = "ident", hostname = "localhost", realname = "mozart-client bot", umodes = "") ->
     bot = new Bot nickname, ident, hostname, realname, umodes
@@ -70,5 +80,13 @@ class MozartClient extends EventEmitter
       throw new Error "Creating a bot require a Slot"
 
     bot.init @slot
+
+  registerBot: (bot) ->
+    if !bot.id
+      throw new Error 'Bot is not started'
+    @bots[bot.id] = bot
+    @subscriber.subscribe("#{ IRC_EVENTS.USER_PRIVMSG }@#{ bot.id }")
+    @subscriber.subscribe("#{ IRC_EVENTS.USER_NOTICE }@#{ bot.id }")
+    @subscriber.subscribe("#{ IRC_EVENTS.USER_CTCP }@#{ bot.id }")
 
 module.exports = MozartClient

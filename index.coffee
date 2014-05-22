@@ -5,6 +5,7 @@
 
 MozartClient = require './src/mozart-client'
 events = require './src/events'
+{BOT_COMMANDS} = require './src/commands'
 
 client = new MozartClient "tcp://127.0.0.1:5551", "tcp://127.0.0.1:5552", [
   events.CHANNEL_JOIN
@@ -14,7 +15,37 @@ client.on 'ready', ->
   bot = client.createBot "TestBot", "test", "test.spoke.la", "testing bot", "+i"
   bot.on 'ready', ->
     console.log 'bot is ready'
+    client.registerBot bot
     # do amazing things here...
+    bot.on events.USER_PRIVMSG, (e, sender, target, msg) ->
+      console.log "PRIVMSG FROM: #{ sender.nickname }: #{ msg }"
+      if msg.indexOf('!') != 0
+        return
+
+      tmp = msg.split(' ')
+      cmd = tmp[0].substr(1).toLowerCase()
+
+      if cmd == 'quit'
+        bot.send(BOT_COMMANDS.DISCONNECT, null, bot.id, msg.substr(cmd.length+1).trim())
+      else if cmd == 'renick' && tmp[1] != undefined && tmp[1].length > 0
+        bot.send(BOT_COMMANDS.NICKNAME, null, bot.id, tmp[1])
+      else if cmd == 'away'
+        bot.send(BOT_COMMANDS.AWAY, null, bot.id, msg.substr(cmd.length+1).trim())
+      else if cmd == 'umode' && tmp[1] != undefined && tmp[1].length > 0
+        bot.send(BOT_COMMANDS.UMODE, null, bot.id, tmp[1])
+      else if cmd == 'join' && tmp[1] != undefined && tmp[1].length > 0
+        bot.send(BOT_COMMANDS.CHANNEL_JOIN, null, bot.id, tmp[1])
+      else if cmd == 'part' && tmp[1] != undefined && tmp[1].length > 0
+        bot.send(BOT_COMMANDS.CHANNEL_PART, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'mode' && tmp.length >= 2
+        bot.send(BOT_COMMANDS.CHANNEL_MODE, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'topic' && tmp.length >= 2
+        bot.send(BOT_COMMANDS.CHANNEL_TOPIC, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'say' && tmp.length >= 2
+        bot.send(BOT_COMMANDS.CHANNEL_PRIVMSG, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'say-notice' && tmp.length >= 2
+        bot.send(BOT_COMMANDS.CHANNEL_NOTICE, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+
 
   client.startBot bot
 

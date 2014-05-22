@@ -9,6 +9,7 @@ class Bot extends EventEmitter
   constructor: (@nickname, @ident, @hostname, @realname, @umodes) ->
     @slot = null
     @slotCallback = null
+    @id = null
 
   init: (slot) ->
     @slot = slot
@@ -25,7 +26,10 @@ class Bot extends EventEmitter
 
     @send(
       BOT_COMMANDS.CONNECT,
-      ->
+      (response) ->
+        if response.status != 'OK'
+          throw new Error 'Cannot create bot: '+ response.error
+        self.id = response.data
         @emit 'ready'
       @nickname,
       @ident,
