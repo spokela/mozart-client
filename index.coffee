@@ -5,7 +5,7 @@
 
 MozartClient = require './src/mozart-client'
 events = require './src/events'
-{BOT_COMMANDS} = require './src/commands'
+{IRC_COMMANDS} = require './src/commands'
 
 client = new MozartClient "tcp://127.0.0.1:5551", "tcp://127.0.0.1:5552", [
   events.CHANNEL_JOIN
@@ -26,25 +26,31 @@ client.on 'ready', ->
       cmd = tmp[0].substr(1).toLowerCase()
 
       if cmd == 'quit'
-        bot.send(BOT_COMMANDS.DISCONNECT, null, bot.id, msg.substr(cmd.length+1).trim())
+        bot.send(IRC_COMMANDS.USER_CONNECT, null, bot.id, msg.substr(cmd.length+1).trim())
       else if cmd == 'renick' && tmp[1] != undefined && tmp[1].length > 0
-        bot.send(BOT_COMMANDS.NICKNAME, null, bot.id, tmp[1])
+        bot.send(IRC_COMMANDS.USER_NICKNAME, null, bot.id, tmp[1])
       else if cmd == 'away'
-        bot.send(BOT_COMMANDS.AWAY, null, bot.id, msg.substr(cmd.length+1).trim())
+        bot.send(IRC_COMMANDS.USER_AWAY, null, bot.id, msg.substr(cmd.length+1).trim())
       else if cmd == 'umode' && tmp[1] != undefined && tmp[1].length > 0
-        bot.send(BOT_COMMANDS.UMODE, null, bot.id, tmp[1])
+        bot.send(IRC_COMMANDS.USER_MODE, null, bot.id, null, tmp[1])
       else if cmd == 'join' && tmp[1] != undefined && tmp[1].length > 0
-        bot.send(BOT_COMMANDS.CHANNEL_JOIN, null, bot.id, tmp[1])
+        bot.send(IRC_COMMANDS.CHANNEL_JOIN, null, bot.id, tmp[1])
       else if cmd == 'part' && tmp[1] != undefined && tmp[1].length > 0
-        bot.send(BOT_COMMANDS.CHANNEL_PART, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+        bot.send(IRC_COMMANDS.CHANNEL_PART, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
       else if cmd == 'mode' && tmp.length >= 2
-        bot.send(BOT_COMMANDS.CHANNEL_MODE, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+        bot.send(IRC_COMMANDS.CHANNEL_MODE, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'smode' && tmp.length >= 2
+        bot.send(IRC_COMMANDS.CHANNEL_MODE, null, null, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
       else if cmd == 'topic' && tmp.length >= 2
-        bot.send(BOT_COMMANDS.CHANNEL_TOPIC, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+        bot.send(IRC_COMMANDS.CHANNEL_TOPIC, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'stopic' && tmp.length >= 2
+        bot.send(IRC_COMMANDS.CHANNEL_TOPIC, null, null, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
       else if cmd == 'say' && tmp.length >= 2
-        bot.send(BOT_COMMANDS.CHANNEL_PRIVMSG, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+        bot.send(IRC_COMMANDS.PRIVMSG, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
       else if cmd == 'say-notice' && tmp.length >= 2
-        bot.send(BOT_COMMANDS.CHANNEL_NOTICE, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+        bot.send(IRC_COMMANDS.NOTICE, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'scnotice' && tmp.length >= 2
+        bot.send(IRC_COMMANDS.NOTICE, null, null, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
 
 
   client.startBot bot

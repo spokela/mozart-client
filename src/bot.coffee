@@ -3,7 +3,7 @@
 # (c) Spokela 2014
 #
 {EventEmitter} = require 'events'
-{BOT_COMMANDS, SERVER_COMMANDS} = require './commands'
+{IRC_COMMANDS} = require './commands'
 
 class Bot extends EventEmitter
   constructor: (@nickname, @ident, @hostname, @realname, @umodes) ->
@@ -25,7 +25,7 @@ class Bot extends EventEmitter
       self.slotCallback = null
 
     @send(
-      BOT_COMMANDS.CONNECT,
+      IRC_COMMANDS.USER_CONNECT,
       (response) ->
         if response.status != 'OK'
           throw new Error 'Cannot create bot: '+ response.error
