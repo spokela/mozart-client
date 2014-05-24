@@ -51,7 +51,10 @@ client.on 'ready', ->
         bot.send(IRC_COMMANDS.NOTICE, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
       else if cmd == 'scnotice' && tmp.length >= 2
         bot.send(IRC_COMMANDS.NOTICE, null, null, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
-
+      else if cmd == 'kick' && tmp.length >= 3
+        bot.send(IRC_COMMANDS.CHANNEL_KICK, null, bot.id, tmp[1], tmp[2], msg.substr(cmd.length+tmp[1].length+tmp[2].length+4).trim())
+      else if cmd == 'skick' && tmp.length >= 3
+        bot.send(IRC_COMMANDS.CHANNEL_KICK, null, null, tmp[1], tmp[2], msg.substr(cmd.length+tmp[1].length+tmp[2].length+4).trim())
 
   client.startBot bot
 
