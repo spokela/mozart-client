@@ -57,6 +57,12 @@ client.on 'ready', ->
         bot.send(IRC_COMMANDS.CHANNEL_KICK, null, null, tmp[1], tmp[2], msg.substr(cmd.length+tmp[1].length+tmp[2].length+4).trim())
       else if cmd == 'invite' && tmp.length >= 2
         bot.send(IRC_COMMANDS.CHANNEL_INVITE, null, bot.id, tmp[1], tmp[2])
+      else if cmd == 'kill' && tmp.length >= 2
+        bot.send(IRC_COMMANDS.USER_KILL, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'skill' && tmp.length >= 2
+        bot.send(IRC_COMMANDS.USER_KILL, null, null, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'auth' && tmp.length >= 2
+        bot.send(IRC_COMMANDS.USER_AUTH, null, null, tmp[1], tmp[2])
 
   client.startBot bot
 
