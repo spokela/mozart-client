@@ -1,7 +1,6 @@
 #
 # This file is part of Mozart
 # (c) Spokela 2014
-#
 
 IRC_COMMANDS = {
   CHANNEL_JOIN:         'irc:chan-join',
@@ -23,6 +22,7 @@ IRC_COMMANDS = {
   PRIVMSG:              'irc:privmsg',
   NOTICE:               'irc:notice',
   CTCP:                 'irc:ctcp',
+  CTCP_REPLY:           'irc:ctcp-reply',
 
   SERVER_QUIT:          'irc:squit',
   SERVER_JUPE_ADD:      'server:jupe-add',

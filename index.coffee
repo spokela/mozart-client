@@ -16,6 +16,11 @@ client.on 'ready', ->
   bot.on 'ready', ->
     console.log 'bot is ready'
     client.registerBot bot
+
+    bot.on events.USER_CTCP, (e, sender, target, msg) ->
+      if msg == "VERSION"
+        bot.send(IRC_COMMANDS.CTCP_REPLY, null, bot.id, sender.nickname, "VERSION mozart-client/1.0")
+
     # do amazing things here...
     bot.on events.USER_PRIVMSG, (e, sender, target, msg) ->
       console.log "PRIVMSG FROM: #{ sender.nickname }: #{ msg }"
@@ -45,7 +50,7 @@ client.on 'ready', ->
         bot.send(IRC_COMMANDS.CHANNEL_TOPIC, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
       else if cmd == 'stopic' && tmp.length >= 2
         bot.send(IRC_COMMANDS.CHANNEL_TOPIC, null, null, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
-      else if cmd == 'say' && tmp.length >= 2
+      else if cmd == 'say' && tmp.length >= 3
         bot.send(IRC_COMMANDS.PRIVMSG, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
       else if cmd == 'say-notice' && tmp.length >= 2
         bot.send(IRC_COMMANDS.NOTICE, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
@@ -63,6 +68,10 @@ client.on 'ready', ->
         bot.send(IRC_COMMANDS.USER_KILL, null, null, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
       else if cmd == 'auth' && tmp.length >= 2
         bot.send(IRC_COMMANDS.USER_AUTH, null, null, tmp[1], tmp[2])
+      else if cmd == 'ctcp' && tmp.length >= 3
+        bot.send(IRC_COMMANDS.CTCP, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
+      else if cmd == 'ctcp-reply' && tmp.length >= 3
+        bot.send(IRC_COMMANDS.CTCP_REPLY, null, bot.id, tmp[1], msg.substr(cmd.length+tmp[1].length+3).trim())
 
   client.startBot bot
 
